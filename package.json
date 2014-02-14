@@ -1,0 +1,42 @@
+{
+  "name": "paintitblack",
+  "fullName": "Paint It Black!",
+  "id": "jid1-pZfT3AVTAzULwg",
+  "description": "Force text color to black, when appropriate.",
+  "author": "Robert L. Pyron",
+  "license": "The MIT License (MIT) [http://opensource.org/licenses/MIT]",
+  "version": "1.0.0",
+  "permissions": {"private-browsing": true},
+  "preferences": [
+    {
+      "name" : "autoColor", 
+      "type" : "bool", 
+      "value": false,
+      "title": "Automatically color pages on load",
+      "description" : "Setting this to true may slow loading of some pages."
+    },
+    {
+      "name" : "autoAdjustFontWeight",
+      "type" : "bool", 
+      "value": true,
+      "title": "Automatically adjust font weight",
+      "description" : "This will have no effect when a normal-weight version of a font is not available."
+    },
+    {
+      "name" : "clampLow",
+      "type" : "integer", 
+      "value": 10,
+      "title": "Headers and links: minimum brightness (percentage)",
+      "description" : "Don't darken headers and links below this level."
+    },
+    {
+      "name" : "clampHigh",
+      "type" : "integer", 
+      "value": 40,
+      "title": "Headers and links: maximum brightness (percentage)",
+      "description" : "Always darken headers and links below this level."
+    }
+  ],
+  "icon"  : "data/images/paintitblack-48.png",
+  "icon64": "data/images/paintitblack-64.png"
+}
