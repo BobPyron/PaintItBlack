@@ -5,88 +5,234 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:400,400italic,300,300italic,700,700italic' rel='stylesheet' type='text/css'>
 </head>
 
-<body>
-<div id='header'>
-    <h1>
-        <img src="../data/images/paintitblack-64.png">
-        <em>Paint It Black!</em>
-    </h1>
-</div>
-
-<div id='content'>
-
-    <div class='regular_text'>
-    <h3>(Regular Text)</h3>
-    <p>
-        <a href='https://github.com/BobPyron/paint-it-black'><em>Paint It Black!</em></a> 
-        is a Firefox extension with a very simple goal &mdash; it forces text to 
-        be black, whenever possible.  </p> 
-    </div>
-    
-    <div class='gray_text'>
-    <h3>(Gray Text)</h3>
-    <p>
-        Many sites use gray text on a bright white background.
-        I could write a long rant about this, but 
-        <a href="http://contrastrebellion.com/">Contrast Rebellion</a> 
-        says it better, more completely, and more politely than I can, and 
-        gives useful pointers to further reading.</p> 
-    </div>
-    
-    <div class='narrow_fontweight'>
-    <h3>(Narrow Font Weight)</h3>
-    <p>
-        Some sites specify a narrow font weight. Even when the text color 
-        is black, it can be difficult to read. <em>Paint It Black!</em> will 
-        force the font weight to normal, whenever possible.
-    </p>
-    </div>
-
-    <div class='dark_background'>
-    <h3>(Dark Background)</h3>
-    <p>
-        <em>Paint It Black!</em> will not affect any text that is lighter 
-        than the background color.
-    </p>
-    </div>
-</div>
-
-</body>
 
 <style>
-    body { 
-        width:40em; 
-        min-width:400px; 
-        max-width:960px; 
-        margin-left: auto; 
-        margin-right: auto; 
+
+    #container {
+        min-width: 780px;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    #header {
+    	background: lightgray;
+    	text-align: center;
+    }
+
+    #column_left {
+        float:left;
+        width:640px;
+    }
+
+    #column_right {
+        float:left;
+        width:640px;
+    }
+
+    #footer {
+        clear:both;
+    	background: lightgray;
+        color: #ED6323;
+    	text-align: center;
+    }
+
+    body {
         color: #999;
         }
 
     h1 img { vertical-align: -10px; }
     h1 { color: #ED6323; }
+
+    .regular_text_block         { color:black;   }
+    .gray_text_block            { color:gray;    }
+    .narrow_fontweight_block    { color:black;   }
+    .narrow_fontweight_block h3 { color:#6323ED; }
+    .narrow_fontweight_block h4 { color:#6323ED; }
+    .dark_background_block      { color:#23ED63; background-color:black; }
+    .dark_background_block h3   { color:#ED6323; }
     
-    .regular_text         { color:black;   }
-    .gray_text            { color:gray;    }
-    .narrow_fontweight    { color:#111111; }
-    .narrow_fontweight    { 
+    .narrow_fontweight    {
         font-family: 'Lato', sans-serif;
-        font-weight: 300; 
+        font-weight: 300;
         font-size: larger;
         }
-    .narrow_fontweight h3 { color:#6323ED; }
-    .dark_background { 
-        color:#23ED63; 
-        background-color:black;   
-        }
-    
+
     #content { column-count: 2; }
-    
-/* 2F85C4 */    
+
+/* 2F85C4 */
 /* ED6323 */
-/* ED6323 */    
+/* ED6323 */
 
 </style>
 
 
+
+
+<body>
+<div id='container'>
+
+<div id='header'>
+    <h1>
+        <img src="../data/images/paintitblack-64.png">
+        <em>Paint It Black!</em>
+    </h1>
+</div> <!--header-->
+
+<div id='column_left'>
+
+    <div class='regular_text_block'>
+    <h3>(Regular Text)</h3>
+    <p>
+        <a href='https://github.com/BobPyron/paint-it-black'><em>Paint It Black!</em></a>
+        is a Firefox extension with a very simple goal &mdash; it forces text to
+        be black, whenever possible.
+        </p>
+    <p>
+        <em>Bacon ipsum dolor sit amet meatloaf biltong venison shoulder spare
+        ribs porchetta, rump sirloin filet mignon ribeye doner beef ribs. </em>
+        </p>
+    </div>
+
+    <div class='gray_text_block'>
+    <h3>(Gray Text)</h3>
+    <p>
+        Many sites use gray text on a bright white background.
+        I could write a long rant about this, but
+        <a href="http://contrastrebellion.com/">Contrast Rebellion</a>
+        says it better, more completely, and more politely than I can, and
+        gives useful pointers to further reading.
+        </p>
+    <p>
+        <em>Filet mignon ground round t-bone, pork chop fatback tri-tip flank
+        capicola tail pancetta ribeye doner sausage meatloaf.
+        Drumstick short ribs sirloin sausage shankle.
+        Pastrami meatball corned beef, pig salami. 
+        </em>
+        </p>
+    </div>
+</div> <!--column_left-->
+
+<div id='column_right'>
+    <div class='narrow_fontweight_block'>
+    <h3>(Narrow Font Weight)</h3>
+    <span class="narrow_fontweight">
+    <p>
+        Some sites specify a narrow font weight. Even when the text color
+        is black, it can be difficult to read. <em>Paint It Black!</em> will
+        force the font weight to normal, whenever possible.
+        </p>
+    <p>
+        <em>Turducken fatback prosciutto short loin.  Jerky ham pork loin jowl
+        pancetta kevin doner venison shank cow tenderloin ground round
+        frankfurter.</em>
+        </p>
+    </span>
+    </div> <!--narrow_fontweight_block-->
+    
+    <div class='dark_background_block'>
+    <h3>(Dark Background)</h3>
+    <p>
+        <em>Paint It Black!</em> will not affect any text that is lighter
+        than the background color. It may, however, force narrow fonts to 
+        normal weight.
+        </p>
+    <p>
+        <span class="narrow_fontweight">
+        <em>Hamburger pig turducken, pork fatback leberkas doner prosciutto.
+            Tail pork belly turkey, beef ribs ham pork ribeye.
+            Jerky jowl rump prosciutto round ham hamburger.
+        </em>
+        </span>
+    </p>
+    </div> <!--dark_background_block-->
+</div> <!--column_right-->
+
+
+<div id='footer'>
+    <p>
+        <em>(<b>Bacon Ipsum</b> generated by http://baconipsum.com/).</em>
+    </p>
+</div> <!--footer-->
+
+</div> <!--container-->
+
+</body>
+
 </html>
+
+
+<!-- Here's some bacon ipsum (from http://baconipsum.com/) ...
+
+Bacon ipsum dolor sit amet meatloaf biltong venison shoulder spare ribs
+porchetta, rump sirloin filet mignon ribeye doner beef ribs.
+
+Filet mignon ground round t-bone, pork chop fatback tri-tip flank capicola
+tail pancetta ribeye doner sausage meatloaf.
+
+Shoulder filet mignon biltong, chicken ham hamburger drumstick tenderloin
+pork chop tail venison short ribs pancetta sirloin leberkas.
+
+Pancetta tri-tip salami ham hock pig ground round rump pork loin spare
+ribs pork belly shankle prosciutto.
+
+Ball tip kevin tongue ground round, corned beef jowl kielbasa biltong
+sirloin jerky prosciutto.
+
+Doner strip steak shoulder, kielbasa corned beef landjaeger tenderloin
+porchetta short ribs jowl meatloaf pork.
+
+Tri-tip turducken cow doner, bacon strip steak filet mignon shoulder
+salami capicola brisket chuck beef ribs.
+
+Turducken fatback prosciutto short loin.
+
+Jerky ham pork loin jowl pancetta kevin doner venison shank cow tenderloin
+landjaeger ground round frankfurter.
+
+Pastrami meatball corned beef, pig salami jerky jowl rump prosciutto
+ground round ham hamburger.
+
+Prosciutto shank swine capicola pancetta shoulder.
+
+Turducken beef t-bone, sirloin pig capicola tenderloin.
+
+Kevin prosciutto turducken ground round landjaeger bresaola, pork chuck
+ribeye pork chop pork loin.
+
+Fatback pig spare ribs tri-tip, flank meatloaf pork belly tongue beef
+ground round chicken kevin.
+
+Pork chop short loin ribeye biltong pork loin, corned beef turducken pork
+doner shank swine capicola andouille leberkas meatball.
+
+Andouille pig strip steak leberkas tongue bacon rump.
+
+Tail swine ham hock cow spare ribs doner fatback brisket drumstick ribeye
+meatloaf jerky strip steak.
+
+Drumstick short ribs sirloin sausage shankle.
+
+Hamburger pig turducken, pork fatback leberkas doner prosciutto.
+
+Brisket sirloin andouille doner.
+
+Filet mignon turducken landjaeger, jowl corned beef biltong bacon ground
+round spare ribs boudin ham hock prosciutto meatloaf short loin.
+
+Jerky venison kielbasa pig cow doner chicken boudin meatball rump sausage.
+
+Tail pork belly turkey, beef ribs ham pork ribeye.
+
+Filet mignon sausage flank, venison t-bone turkey ball tip tri-tip spare
+ribs.
+
+Chuck turkey doner short ribs pancetta meatloaf.
+
+Bresaola short loin landjaeger porchetta rump capicola kielbasa filet
+mignon fatback jerky prosciutto sausage leberkas boudin.
+
+Prosciutto fatback beef filet mignon strip steak venison andouille
+frankfurter hamburger leberkas pork loin swine brisket porchetta.
+
+-->
+

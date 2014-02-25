@@ -5,13 +5,13 @@
   "description": "Force text color to black, when appropriate.",
   "author": "Robert L. Pyron",
   "license": "The MIT License (MIT) [http://opensource.org/licenses/MIT]",
-  "version": "1.0.0",
+  "version": "1.0.1.dev",
   "permissions": {"private-browsing": true},
   "preferences": [
     {
       "name" : "autoColor", 
       "type" : "bool", 
-      "value": false,
+      "value": true,
       "title": "Automatically color pages on load",
       "description" : "Setting this to true may slow loading of some pages."
     },
