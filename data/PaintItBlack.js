@@ -7,12 +7,10 @@
 //
 //==============================================================================
 
+// jshint moz:true, sub:true
+
 (function() {
   
-  // These will be updated at the end of this file.  
-  var loggit = function() {return;}
-  var logging = false;
-
   /*****************************************************************************
   ** GLOBAL CONSTANTS AND VARIABLES
   *****************************************************************************/
@@ -22,7 +20,6 @@
   const classname_fontweight = "paintitblack_normalweight";
   const css_forceblack       = " .paintitblack_forceblack {color:black!important;}";
   const css_fontweight       = " .paintitblack_normalweight {font-weight:normal!important;}";
-  const truncatedURI = truncateUrl(document.documentURI);
 
   var documentAnalyzed = false;   // set by AnalyzeDocumentColors(); never cleared
   var documentModified = false;   // set by UpdateDocumentColors(), cleared by ToggleDocumentColors()
@@ -54,36 +51,18 @@
   *****************************************************************************/
   function AnalyzeDocumentColors() {
 
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter AnalyzeDocumentColors : " + truncatedURI);
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("+---------");
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
-    
     // ---------------------
     // Go away, if possible.
     // ---------------------
     if (document.body===undefined) {
       // There is no document body for about:blank, about:config, etc.
-      loggit("---------- leave AnalyzeDocumentColors (document.body is undefined)");
-      loggit("");
       return;
     }
     else if (!document.body) {
-      loggit("---------- leave AnalyzeDocumentColors (no document.body)");
-      loggit("");
       return;
     }
     else if (documentAnalyzed) {
       // We've already analyzed colors for this site.
-      loggit("---------- leave AnalyzeDocumentColors (document has already been analyzed)");
-      loggit("");
       return;
     }
 
@@ -106,6 +85,7 @@
       // Get existing foreground and background colors.
       // Deal with "transparent" colors.
       // ----------------------------------------------
+      var fg_old, bg_old;   // keep jshint happy
       var myStyles = $(node).css(["color" , "background-color" , "font-weight"]);
       var fg_new = fg_old = myStyles["color"];
       var bg_new = bg_old = myStyles["background-color"];
@@ -185,35 +165,6 @@
         $(node).addClass(classname_forceblack);
       }
 
-      // -----------------------
-      // Log old and new colors.
-      // -----------------------
-      if (logging)
-      {
-        var depth = $(node).parents().length;
-        var displayName = sprintf("%-*s%s", depth, " ", node.nodeName);
-        if ( SameColor(fg_new,fg_old) ) {
-          // no change
-          loggit("%-22s  %-14s | %-14s %-14s | %s",
-                 displayName,
-                 FormattedColorInfo(auxdata.bg_parent),
-                 FormattedColorInfo(fg_old),
-                 FormattedColorInfo(bg_old),
-                 reason
-                 );
-        }
-        else {
-          loggit("%-22s  %-14s | %-14s %-14s | %-14s %-14s",
-                 displayName,
-                 FormattedColorInfo(auxdata.bg_parent),
-                 FormattedColorInfo(fg_old),
-                 FormattedColorInfo(bg_old),
-                 FormattedColorInfo(fg_new),
-                 FormattedColorInfo(bg_new)
-                 );
-        }
-      }
-
       // -----------------------------------------------------------------
       // Generate new auxdata that will be passed to this node's children.
       // -----------------------------------------------------------------
@@ -229,14 +180,6 @@
     // FINI.
     // -----------
     documentAnalyzed = true;
-    if (logging) {
-      loggit("+--------- leave AnalyzeDocumentColors");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+---------");
-      loggit("");
-    }
   }
 
   /*****************************************************************************
@@ -252,20 +195,6 @@
   *****************************************************************************/
   function ModifyDocumentColors(forceUpdateColors) {
 
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter ModifyDocumentColors  ( %s , %s (", truncatedURI, forceUpdateColors);
-      loggit("| forceUpdateColors   = %-5s", forceUpdateColors  );
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("| userPrefs.autoColor = %-5s", userPrefs.autoColor);
-      loggit("+---------");
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
-    
     if ( !documentAnalyzed ) {
       // This is the first time the tab is visible. Analyze it.
       if (userPrefs.autoColor) {
@@ -283,17 +212,8 @@
       UpdateDocumentColors(forceUpdateColors);
     }
     
-    loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
     self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
 
-    if (logging) {
-      loggit("+-------- leave ModifyDocumentColors");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+--------");
-      loggit("");
-    }
   }
 
 
@@ -302,18 +222,6 @@
   *****************************************************************************/
   function UpdateDocumentColors(forceUpdateColors) {
     
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter UpdateDocumentColors  : " + truncatedURI);
-      loggit("| forceUpdateColors   = %-5s", forceUpdateColors  );
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("+---------");
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
     
     //-----------------------------------------------------------------
     // Look for excuses to skip all the hard work and just laze around.
@@ -323,20 +231,12 @@
     }
     else if (!documentNeedsUpdate) {
       // We're not needed.  Don't leave in a huff, just leave.
-      loggit("---------- leave UpdateDocumentColors  (document does not need an update)");
-      loggit("");
-      loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
       self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
-      loggit("");
       return;
     }
     else if (!documentAnalyzed) {
       // We can't do anything if document colors have not been analyzed.
-      loggit("---------- leave UpdateDocumentColors  (document has not been analyzed)");
-      loggit("");
-      loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
       self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
-      loggit("");
       return;
     }
     
@@ -381,8 +281,6 @@
     var stylesheet = sprintf("\n\n<STYLE id='%s'>\n%s</STYLE>\n", stylesheet_id, css);
     $("#"+stylesheet_id).remove();
     $(stylesheet).appendTo( $(":root") );
-
-    loggit(stylesheet);
     
     // -----------
     // FINI.
@@ -390,17 +288,8 @@
     documentModified = true;
     documentNeedsUpdate = false;
 
-    loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
     self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
 
-    if (logging) {
-      loggit("+-------- leave UpdateDocumentColors");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+--------");
-      loggit("");
-    }
   }
     
   
@@ -412,18 +301,6 @@
   *****************************************************************************/
   function RevertDocumentColors() {
 
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter RevertDocumentColors  : " + truncatedURI);
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("+---------");
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
-    
     //--------------------------------------------------------------------
     // We appended a global stylesheet with an id of 'paintitblack'.
     // Throw it away.
@@ -463,7 +340,7 @@
         // If there are no remaining classes for this node,
         // remove the 'class' attribute.
         // ------------------------------------------------
-        if (classList.length == 0) {
+        if (classList.length === 0) {
           node.removeAttribute('class');
         }
 
@@ -477,35 +354,15 @@
     documentModified = false;
     documentNeedsUpdate = false;
     
-    loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
     self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
 
-    if (logging) {
-      loggit("+--------- leave RevertDocumentColors");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+---------");
-      loggit("");
-    }
-  };
+  }
 
   
   /*****************************************************************************
   ** ToggleDocumentColors() - 
   *****************************************************************************/
   function ToggleDocumentColors() {
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter ToggleDocumentColors  : " + truncatedURI);
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("+---------");
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
     
     if (documentModified) {
       // We're currently looking at a modified document. Revert it.
@@ -515,14 +372,6 @@
       ModifyDocumentColors(forceUpdateColors=true);
     }
     
-    if (logging) {
-      loggit("+--------- leave ToggleDocumentColors");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+---------");
-      loggit("");
-    }
   }
   
   /*****************************************************************************
@@ -541,29 +390,12 @@
       return true;
     }
     
-    if (logging) {
-      loggit("");
-      loggit("+--------- enter UpdatePreferences     " + JSON.stringify(newPrefs));
-      loggit("| documentAnalyzed    = %-5s", documentAnalyzed   );
-      loggit("| documentModified    = %-5s", documentModified   );
-      loggit("| documentNeedsUpdate = %-5s", documentNeedsUpdate);
-      loggit("+---------");
-      loggit("  oldPrefs = " + JSON.stringify(userPrefs));
-      var oldAnalyzed    = documentAnalyzed   ;
-      var oldModified    = documentModified   ;
-      var oldNeedsUpdate = documentNeedsUpdate;
-    }
-    
     // First, make sure the new values are within acceptable range.
     newPrefs.autoColor            = !!newPrefs.autoColor;
     newPrefs.autoAdjustFontWeight = !!newPrefs.autoAdjustFontWeight;
     newPrefs.clampLow             = clamp(newPrefs.clampLow, 0, 100);
     newPrefs.clampHigh            = clamp(newPrefs.clampHigh, 0, 100);
 
-    if (logging) {
-      loggit("  newPrefs = %s  %s", JSON.stringify(newPrefs), (PrefsEqual(newPrefs, userPrefs) ? "NO CHANGE" : "DIFFERENT"));
-    }
-    
     // Determine whether an update is needed for this document.
     if ( !PrefsEqual(newPrefs, userPrefs) ) {
       documentNeedsUpdate = true;
@@ -572,14 +404,6 @@
     // Store the new preferences.
     userPrefs = newPrefs;
 
-    if (logging) {
-      loggit("+--------- leave UpdatePreferences");
-      loggit("| documentAnalyzed    = %-5s  (%-5s)%s", documentAnalyzed   , oldAnalyzed   , (documentAnalyzed    === oldAnalyzed   ) ? '' : '  **' );
-      loggit("| documentModified    = %-5s  (%-5s)%s", documentModified   , oldModified   , (documentModified    === oldModified   ) ? '' : '  **' );
-      loggit("| documentNeedsUpdate = %-5s  (%-5s)%s", documentNeedsUpdate, oldNeedsUpdate, (documentNeedsUpdate === oldNeedsUpdate) ? '' : '  **' );
-      loggit("+---------");
-      loggit("");
-    }
   }
 
   /*****************************************************************************
@@ -657,16 +481,9 @@
   *****************************************************************************/
   function DarkenForeground(fg,bg) {
 
-//    loggit("---------------- DarkenForeground      ( %s , %s )",
-//           FormattedColorInfo(fg),
-//           FormattedColorInfo(bg)
-//           );
-
     var CLAMP_LO = userPrefs.clampLow  * 255 / 100;  // Don't darken below this number.
     var CLAMP_HI = userPrefs.clampHigh * 255 / 100;  // Make sure result is below this number.
 
-//    loggit("  userPrefs.clampLow   = %3d | CLAMP_LO = %3d", userPrefs.clampLow , CLAMP_LO);
-//    loggit("  userPrefs.clampHigh  = %3d | CLAMP_HI = %3d", userPrefs.clampHigh, CLAMP_HI);
 
     // recommended minimum difference between brightness of text and background
     var RECOMMENDED_DIFFERENCE = 125;
@@ -675,12 +492,9 @@
     var fg_brightness = ComputeBrightness(fg);  // value in range [0..255]
     var bg_brightness = ComputeBrightness(bg);  // value in range [0..255]
 
-//    loggit("  old_foreground   = %s | %7.3f (%3d)", FormattedColorInfo(fg), fg_brightness, Math.round(fg_brightness*100/255) );
-//    loggit("  old_background   = %s | %7.3f (%3d)", FormattedColorInfo(bg), bg_brightness, Math.round(bg_brightness*100/255) );
 
     // Don't darken if brightness is already below CLAMP_LO.
     if (fg_brightness < CLAMP_LO) {
-//      loggit("    !!  (fg_brightness < CLAMP_LO)");
       return fg;
     }
 
@@ -689,18 +503,14 @@
     var new_brightness_1 = bg_brightness - RECOMMENDED_DIFFERENCE;
     var new_brightness = clamp(new_brightness_1, CLAMP_LO, CLAMP_HI);
 
-//    loggit("  new_brightness_1 = %7.3f (%3d)", new_brightness_1, Math.round(new_brightness_1*100/255) );
-//    loggit("  new_brightness   = %7.3f (%3d)", new_brightness  , Math.round(new_brightness  *100/255) );
 
     if (new_brightness > fg_brightness) {
-//      loggit("    !!  (new_brightness > fg_brightness)");
       return fg;
     }
 
     // We're going to adjust rgb values by this ratio...
     var adjust = new_brightness / fg_brightness;
 
-//    loggit("  adjust           = %7.3f", adjust);
 
     var rgb = tinycolor(fg).toRgb();
     rgb.r = Math.round(rgb.r * adjust);
@@ -708,8 +518,6 @@
     rgb.b = Math.round(rgb.b * adjust);
 
     var fg_new = tinycolor(rgb).toRgbString();
-//    loggit("  old_foreground   = %s | %7.3f (%3d)", FormattedColorInfo(fg),     fg_brightness , Math.round(fg_brightness *100/255)  );
-//    loggit("  new_foreground   = %s | %7.3f (%3d)", FormattedColorInfo(fg_new), new_brightness, Math.round(new_brightness*100/255)  );
 
     return fg_new;
   }
@@ -743,33 +551,26 @@
   *****************************************************************************/
 
   self.port.on("AnalyzeDocumentColors", function() {
-    loggit("PAINTITBLACK <<< AnalyzeDocumentColors : %s", truncatedURI);
     AnalyzeDocumentColors();                       
   });                                              
 
   self.port.on("ModifyDocumentColors", function() {
-    loggit("PAINTITBLACK <<< ModifyDocumentColors  : %s", truncatedURI);
     ModifyDocumentColors();                        
   });                                              
 
   self.port.on("RevertDocumentColors", function() {
-    loggit("PAINTITBLACK <<< RevertDocumentColors  : %s", truncatedURI);
     RevertDocumentColors();
   });
 
   self.port.on("ToggleDocumentColors", function() {
-    loggit("PAINTITBLACK <<< ToggleDocumentColors  : %s", truncatedURI);
     ToggleDocumentColors();
   });
 
   self.port.on("QueryDocumentState", function() {
-    loggit("PAINTITBLACK <<< QueryDocumentState    : %s", truncatedURI);
-    loggit("PAINTITBLACK >>> UpdateDocumentState   ( %s , %s )", truncatedURI, documentModified);
     self.port.emit("UpdateDocumentState", document.documentURI, documentModified);
     });
 
   self.port.on("UpdatePreferences", function(payload) {
-    loggit("PAINTITBLACK <<< UpdatePreferences     %s", payload);
     var newPrefs = JSON.parse(payload);
     UpdatePreferences(newPrefs);
   });
@@ -783,30 +584,6 @@
     // do nothing
   });
 
-
-  /*****************************************************************************
-  ** __loggit() - utility function
-  *****************************************************************************/
-  function __loggit() {
-    if (arguments.length < 2) {
-      console.log.apply(this,arguments); 
-    }
-    else {
-      var s = sprintf.apply(this,arguments);
-      console.log(s);
-    }
-  };
-  
-  function __noop() {
-    return;
-  };
-
-  // last assignment wins...
-  loggit = __loggit;
-  loggit = __noop;
-  
-  logging = (loggit == __loggit);
-  
   /*****************************************************************************
   ** FINI - paintitblack.js
   *****************************************************************************/

@@ -5,7 +5,7 @@
   "description": "Force text color to black, when appropriate.",
   "author": "Robert L. Pyron",
   "license": "The MIT License (MIT) [http://opensource.org/licenses/MIT]",
-  "version": "1.0.1.dev",
+  "version": "1.0.1",
   "permissions": {"private-browsing": true},
   "preferences": [
     {
